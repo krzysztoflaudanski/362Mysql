@@ -10,16 +10,19 @@ export class ProductsService {
     public getAll(): Promise<Product[]> {
         return this.prismaService.product.findMany();
     }
+
     public getById(id: Product['id']): Promise<Product | null> {
         return this.prismaService.product.findUnique({
             where: { id },
         });
     }
+
     public deleteById(id: Product['id']): Promise<Product> {
         return this.prismaService.product.delete({
             where: { id },
         });
     }
+
     public create(
         productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
     ): Promise<Product> {
@@ -27,6 +30,7 @@ export class ProductsService {
             data: productData,
         });
     }
+
     public updateById(
         id: Product['id'],
         productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
