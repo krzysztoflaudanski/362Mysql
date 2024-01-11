@@ -7,13 +7,13 @@ export class OrdersService {
   constructor(private prismaService: PrismaService) { }
 
   public getAll(): Promise<Order[]> {
-    return this.prismaService.order.findMany({ include: { product: true } });
+    return this.prismaService.order.findMany({ include: { product: true, client: true } });
   }
 
   public getById(id: Order['id']): Promise<Order | null> {
     return this.prismaService.order.findUnique({
       where: { id },
-      include: { product: true },
+      include: { product: true, client: true },
     });
   }
 
@@ -26,11 +26,13 @@ export class OrdersService {
   public async create(
     orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Order> {
-    const { productId, ...otherData } = orderData;
+    const { productId, clientId } = orderData;
     try {
       return await this.prismaService.order.create({
         data: {
-          ...otherData,
+          client: {
+            connect: { id: clientId },
+          },
           product: {
             connect: { id: productId },
           },
@@ -47,11 +49,13 @@ export class OrdersService {
     id: Order['id'],
     orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Order> {
-    const { productId, ...otherData } = orderData;
+    const { productId, clientId } = orderData;
     return this.prismaService.order.update({
       where: { id },
       data: {
-        ...otherData,
+        client: {
+          connect: { id: clientId },
+        },
         product: {
           connect: { id: productId },
         },
